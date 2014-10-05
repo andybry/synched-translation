@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>Synched Translation</title>
+  <style>
+    span.active {
+      background-color: yellow;
+    }
+  </style>
+</head>
+<body>
+
+<p>
+  <span class="span-0">Ἐν</span> <span class="span-1">ἀρχῇ</span> <span class="span-2">ἦν</span> <span class="span-3">ὁ</span> <span class="span-4">λόγος</span>,
+  <span class="span-5">καὶ</span> <span class="span-6">ὁ</span> <span class="span-7">λόγος</span> <span class="span-8">ἦν</span> <span class="span-9">πρὸς</span> <span class="span-10">τὸν</span> <span class="span-11">θεόν</span>,
+  <span class="span-12">καὶ</span> <span class="span-13">θεός</span> <span class="span-14">ἦν</span> <span class="span-15">ὁ</span> <span class="span-16">λόγος</span>.
+</p>
+
+<script>
+  // 16 timings (0 indexed) - last
+  var TIMINGS = [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    7.5,
+    8.5,
+    9.5,
+    10.5,
+    11.5,
+    12.5,
+    13.5,
+    14.5,
+    15.5,
+    16,
+    16.5
+  ];
+
+  function startTheInterval() {
+    var intervalId = 0;
+    intervalId = setInterval(function() {
+      // startTime - the time the audio started
+      // context - the audio context
+      // source - the audio source
+      // audioBuffer - the audio buffer
+      var playTime = context.currentTime - startTime;
+      var index = 0;
+      for(index in TIMINGS) {
+        if(playTime < TIMINGS[index]) break;
+      }
+      var spanId = '.span-' + index;
+      var newElement = document.querySelector(spanId);
+      var oldElement = document.querySelector('span.active');
+      if((newElement !== oldElement)) {
+        if(oldElement) oldElement.className = oldElement.className.replace('active', '');
+        newElement.className += ' active';
+      }
+      if(playTime > audioBuffer.duration) {
+        clearInterval(intervalId);
+      }
+    }, 50);
+  }
+
+  window.AudioContext = window.AudioContext || window.webkitAudioContext;
+  var context = new AudioContext();
+  var request = new XMLHttpRequest();
+  var startTime = 0;
+  request.open('GET', 'John 1 Greek.mp3', true);
+  request.responseType = 'arraybuffer';
+
+  var arrayBuffer = null;
+  var audioBuffer = null;
+  var source = null;
+  request.onload = function() {
+    /**
+     * @type {ArrayBuffer}
+     */
+    var arrayBuffer = request.response;
+    context.decodeAudioData(arrayBuffer, function(decodedBuffer) {
+      audioBuffer = decodedBuffer;
+      source = context.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(context.destination);
+      startTime = source.context.currentTime;
+      source.start(0);
+      startTheInterval();
+    });
+  };
+
+  request.send();
+</script>
+
+</body>
+</html>
