@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head lang="en">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -16,6 +16,11 @@
   <span class="span-0">Ἐν</span> <span class="span-1">ἀρχῇ</span> <span class="span-2">ἦν</span> <span class="span-3">ὁ</span> <span class="span-4">λόγος</span>,
   <span class="span-5">καὶ</span> <span class="span-6">ὁ</span> <span class="span-7">λόγος</span> <span class="span-8">ἦν</span> <span class="span-9">πρὸς</span> <span class="span-10">τὸν</span> <span class="span-11">θεόν</span>,
   <span class="span-12">καὶ</span> <span class="span-13">θεός</span> <span class="span-14">ἦν</span> <span class="span-15">ὁ</span> <span class="span-16">λόγος</span>.
+</p>
+<p>
+  <span class="span-0">In</span> <span class="span-1">the beginning</span> <span class="span-2">was</span> <span class="span-3">the</span> <span class="span-4">word</span>,
+  <span class="span-5">and</span> <span class="span-6">the</span> <span class="span-7">word</span> <span class="span-8">was</span> <span class="span-9">with</span> <span class="span-10">the</span> <span class="span-11">God</span>,
+  <span class="span-12">and</span> <span class="span-13">God</span> <span class="span-14">was</span> <span class="span-15">the</span> <span class="span-16">word.</span>
 </p>
 
 <script>
@@ -53,11 +58,20 @@
         if(playTime < TIMINGS[index]) break;
       }
       var spanId = '.span-' + index;
-      var newElement = document.querySelector(spanId);
-      var oldElement = document.querySelector('span.active');
-      if((newElement !== oldElement)) {
-        if(oldElement) oldElement.className = oldElement.className.replace('active', '');
-        newElement.className += ' active';
+      var newElements = document.querySelectorAll(spanId);
+      var oldElements = document.querySelectorAll('span.active');
+      var elementIndex = 0;
+      var oldElement = null;
+      var newElement = null;
+      if((newElements[0] !== oldElements[0])) {
+        for(elementIndex = 0; elementIndex < oldElements.length; elementIndex++) {
+          oldElement = oldElements[elementIndex];
+          if(oldElement) oldElement.className = oldElement.className.replace('active', '');
+        }
+        for(elementIndex = 0; elementIndex < newElements.length; elementIndex++) {
+          newElement = newElements[elementIndex];
+          newElement.className += ' active';
+        }
       }
       if(playTime > audioBuffer.duration) {
         clearInterval(intervalId);
